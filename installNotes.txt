@@ -1,0 +1,44 @@
+Security
+# add a new user
+useradd -m NAME
+usermod -aG wheel,users NAME
+passwd NAME
+
+// check if line %wheel ALL+(ALL:ALL) ALL is uncommented
+visudo
+
+// to change to user
+su NAME
+
+# lock root password (make sure you have a user with sudo)
+sudo passwd -l root
+// to change back sudo passwd -u root
+
+# firewall
+// make sure ufw is installed
+sudo ufw enable
+sudo ufw default allow outgoing
+sudo ufw default deny incoming
+sudo ufw allow ssh // if you want to ssh into your machine
+
+// check status
+sudo ufw status verbose
+
+#hardening ssh
+// on the machine from which you ssh into
+ssh-keygen -t ed25519 -C "EMAIL"
+ssh-copy-id NAME@IP // get ip "ip addr show | grep 192"
+// on the michine you want to ssh to
+// disable password log in
+sudo nvim /etc/ssh/sshd_conifg.d 
+// look for PasswordAuthentication uncomment and set to no
+// look for PermitRootLogin uncomment and set to no
+// look for UsePAM uncomment and set to no, if multifactor auth i could stay on but with the keys no
+
+sudo systemctl restart sshd
+
+#journalctl for logs
+# sudo ss -tulpn to see which ports are open
+
+# secureboot 23min https://www.youtube.com/watch?v=8Oz4CIB4YjU 
+https://github.com/radleylewis/arch_installation_guide

@@ -1,0 +1,5 @@
+neofetch
+picom-git
+spotify
+yay
+yay-debug
