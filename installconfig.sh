@@ -12,6 +12,7 @@ fi
 
 # get the dotfiles and install pkgs
 sudo pacman -Syu --needed - < pkglist.txt
+sudo yay -S --needed - < aurlist.txt
 git clone https://github.com/BalduinBienlein/.dotfiles "$HOME/.dotfiles"
 
 # set up ly
