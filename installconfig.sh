@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e  # exit on error
+set -e  # exit on error
 echo "Config installer: install .dotfiles and set them up"
 
 read -p "Continue? [y/N]: " confirm
@@ -23,9 +23,6 @@ fi
 # Install repo packages
 sudo pacman -Syu --needed - < pkglist.txt
 
-# Install AUR packages
-yay -S --needed - < aurlist.txt
-
 # Background setup check
 if [[ "$PWD" =~ install$ ]]; then
     echo "Installing the Background..."
@@ -34,6 +31,15 @@ if [[ "$PWD" =~ install$ ]]; then
 else
     echo "Not in install directory, skipping background setup."
 fi
+
+# Add a working Keyserver
+mkdir -p "$HOME/.gnupg"
+echo "keyserver hkp://keyserver.ubuntu.com" > "$HOME/.gnupg/gpg.conf"
+chmod 700 "$HOME/.gnupg"
+chmod 600 "$HOME/.gnupg/gpg.conf"
+
+# Install AUR packages
+yay -S --needed - < aurlist.txt
 
 # Set up dotfiles
 git clone https://github.com/BalduinBienlein/.dotfiles "$HOME/.dotfiles"
