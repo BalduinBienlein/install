@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e  # exit on error
+#set -e  # exit on error
 echo "Config installer: install .dotfiles and set them up"
 
 read -p "Continue? [y/N]: " confirm
@@ -39,15 +39,16 @@ fi
 git clone https://github.com/BalduinBienlein/.dotfiles "$HOME/.dotfiles"
 cd "$HOME/.dotfiles"
 stow .
+git submodule update --init --recursive
 cd "$HOME"
 
 # Install oh-my-zsh (non-interactive)
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "Installing oh-my-zsh..."
-    export RUNZSH=no
-    export CHSH=no
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
+#if [ ! -d "$HOME/.oh-my-zsh" ]; then
+#    echo "Installing oh-my-zsh..."
+#    export RUNZSH=no
+#    export CHSH=no
+#   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#fi
 
 # Set default shell to zsh
 if [ "$SHELL" != "$(which zsh)" ]; then
