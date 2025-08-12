@@ -33,13 +33,35 @@ else
 fi
 
 # Add a working Keyserver
-mkdir -p "$HOME/.gnupg"
-echo "keyserver hkp://keyserver.ubuntu.com" > "$HOME/.gnupg/gpg.conf"
-chmod 700 "$HOME/.gnupg"
-chmod 600 "$HOME/.gnupg/gpg.conf"
+install_aur_packages() {
+    echo "Installing AUR packages..."
+    yay -S --needed - < aurlist.txt || {
+        echo "AUR install failed, checking for missing GPG keys..."
+        
+        # Extract key IDs from yay output
+        missing_keys=$(yay -S --needed - < aurlist.txt 2>&1 | \
+                       grep "unknown public key" | awk '{print $NF}')
+        
+        if [[ -n "$missing_keys" ]]; then
+            echo "Missing keys found: $missing_keys"
+            for key in $missing_keys; do
+                echo "Importing key: $key"
+                gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys "$key" || {
+                    echo "Failed to import $key. Trying keys.openpgp.org..."
+                    gpg --keyserver hkp://keys.openpgp.org --recv-keys "$key"
+                }
+            done
+            echo "Retrying AUR package installation..."
+            yay -S --needed - < aurlist.txt
+        else
+            echo "No missing keys detected, but yay still failed."
+        fi
+    }
+}
+
 
 # Install AUR packages
-yay -S --needed - < aurlist.txt
+install_aur_packages
 
 # Set up dotfiles
 git clone https://github.com/BalduinBienlein/.dotfiles "$HOME/.dotfiles"
